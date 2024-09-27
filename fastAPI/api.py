@@ -1,31 +1,50 @@
 import uvicorn
-from fastapi import FastAPI, HTTPException
-
-from fastAPI import service
-from input import Employee
+from fastapi import FastAPI, HTTPException, Depends
+from input import CreateEmployee, GetEmployee, DeleteEmployee, UpdateEmployee
 from fastAPI.service import Service
+from typing import Union
 
-app = FastAPI()
+app = FastAPI(docs_url="/docs")
 
 service_instance = Service()
-# class API:
-# 
-#     def __init__(self, service=None):
-#         # self.app = FastAPI()
-#         # self.app = None
-#         self.service = service or Service()
-#         # self.setup_routes()
-#
-#     # def setup_routes(self):
-@app.post("/")
-def fastapi_crud(item: Employee):
-    try:
-        result = service_instance.service_call(item, 'C')
-            # result = dbl.db_activity(self, employee, 'C')
-        return result
-    except Exception as err:
-        raise HTTPException(status_code=500, detail=str(err))
+
+
+class FastAPI:
+
+    def __init__(self, service: Service):
+        self.service = service
+
+    async def fastapi_crud(self, item: Union[CreateEmployee, GetEmployee, DeleteEmployee, UpdateEmployee]):
+        try:
+            result = self.service.service_call(item)
+            return result
+        except Exception as err:
+            raise HTTPException(status_code=500, detail=str(err))
+
+
+def get_handler(service: Service = Depends(lambda: service_instance)):
+    return FastAPI(service)
+
+
+@app.post("/create_employee")
+async def create_employee(item: CreateEmployee, handler: FastAPI = Depends(get_handler)):
+    return await handler.fastapi_crud(item)
+
+
+@app.get("/get_employee")
+async def get_employee(item: GetEmployee, handler: FastAPI = Depends(get_handler)):
+    return await handler.fastapi_crud(item)
+
+
+@app.delete("/delete_employee")
+async def delete_employee(item: DeleteEmployee, handler: FastAPI = Depends(get_handler)):
+    return await handler.fastapi_crud(item)
+
+
+@app.put("/update_employee")
+async def update_employee(item: UpdateEmployee, handler: FastAPI = Depends(get_handler)):
+    return await handler.fastapi_crud(item)
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app)
