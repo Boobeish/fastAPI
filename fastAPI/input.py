@@ -13,7 +13,7 @@ class CreateEmployee(BaseModel):
     Emp_Email: EmailStr
     Emp_Phone: int
     Emp_Designation: str
-    Emp_Skills: conlist(str)
+    Emp_Skills: conlist(str, min_length=1, max_length=5)
     Emp_Project_Nm: str
     Emp_Project_Loc: str
     Emp_Manager_Nm: str
@@ -74,7 +74,7 @@ class UpdateEmployee(BaseModel):
     Emp_Email: Optional[EmailStr] = None
     Emp_Phone: Optional[int] = None
     Emp_Designation: Optional[str] = None
-    Emp_Skills: Optional[conlist(str)] = None
+    Emp_Skills: Optional[conlist(str, min_length=1, max_length=5)] = None
     Emp_Project_Nm: Optional[str] = None
     Emp_Project_Loc: Optional[str] = None
     Emp_Manager_Nm: Optional[str] = None

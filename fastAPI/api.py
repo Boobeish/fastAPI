@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI, HTTPException, Depends
 from input import CreateEmployee, GetEmployee, DeleteEmployee, UpdateEmployee
-from fastAPI.service import Service
+from service import Service
 from typing import Union
 
 app = FastAPI(docs_url="/docs")
